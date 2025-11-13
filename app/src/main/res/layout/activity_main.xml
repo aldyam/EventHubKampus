@@ -14,7 +14,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:text="Informasi Acara Kampus"
+        android:text="Event Information"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -26,7 +26,11 @@
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
         android:clipToPadding="false"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
         android:paddingBottom="80dp"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        app:spanCount="2"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -50,7 +54,9 @@
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:src="@drawable/ic_empty_list"
-            app:tint="?android:attr/textColorSecondary"/>
+
+            app:tint="?android:attr/textColorSecondary"
+            />
 
         <TextView
             android:layout_width="wrap_content"
@@ -65,7 +71,6 @@
             android:layout_marginTop="4dp"
             android:text="Klik tombol + untuk menambah acara baru"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
-
     </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

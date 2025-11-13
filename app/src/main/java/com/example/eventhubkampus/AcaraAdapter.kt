@@ -1,6 +1,7 @@
 package com.example.eventhubkampus // Pastikan ini package-mu
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -8,48 +9,53 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.eventhubkampus.databinding.ItemAcaraBinding
 
-/**
- * Adapter untuk RecyclerView.
- */
 class AcaraAdapter : ListAdapter<Acara, AcaraAdapter.AcaraViewHolder>(AcaraDiffCallback()) {
 
-    // Variabel untuk menyimpan fungsi callback saat item diklik
     private var onItemClickCallback: ((Acara) -> Unit)? = null
 
-    // Fungsi untuk diatur dari luar (misal: dari MainActivity)
     fun setOnItemClickListener(callback: (Acara) -> Unit) {
         this.onItemClickCallback = callback
     }
 
-    /**
-     * ViewHolder berisi logika untuk mengikat data (Acara)
-     * ke tampilan (item_acara.xml).
-     */
     class AcaraViewHolder(private val binding: ItemAcaraBinding) : RecyclerView.ViewHolder(binding.root) {
 
-        // --- FUNGSI BIND (INI YANG KITA UBAH) ---
         fun bind(acara: Acara) {
 
             // 1. Mengisi Teks
             binding.idItemNamaAcara.text = acara.namaAcara
+            binding.idItemLokasi.text = acara.lokasi
             binding.idItemTanggal.text = acara.tanggal
-            binding.idItemPenyelenggara.text = acara.penyelenggara // <-- Teks baru
 
-            // 2. Mengisi Gambar
+            // Tampilkan penyelenggara
+            if (acara.penyelenggara.isNullOrEmpty()) {
+                binding.idItemPenyelenggara.visibility = View.GONE
+            } else {
+                binding.idItemPenyelenggara.visibility = View.VISIBLE
+                binding.idItemPenyelenggara.text = acara.penyelenggara
+            }
+
+            // ---
+            // 2. (BARU) Mengisi Teks Deskripsi
+            // ---
+            if (acara.deskripsi.isNullOrEmpty()) {
+                // Sembunyikan jika tidak ada deskripsi
+                binding.idItemDeskripsi.visibility = View.GONE
+            } else {
+                binding.idItemDeskripsi.visibility = View.VISIBLE
+                binding.idItemDeskripsi.text = acara.deskripsi
+            }
+
+            // 3. Mengisi Gambar Header
             Glide.with(itemView.context)
                 .load(acara.fotoPath) // Muat path foto
-                .placeholder(R.drawable.ic_image_placeholder) // Gambar default saat loading
-                .error(R.drawable.ic_image_placeholder) // Gambar jika acara tidak punya foto
-                .centerCrop() // Potong gambar agar pas
-                .into(binding.idItemGambar) // Masukkan ke ImageView
+                .placeholder(R.drawable.ic_image_placeholder) // Gambar default
+                .error(R.drawable.ic_image_placeholder) // Gambar jika error/kosong
+                .centerCrop()
+                .into(binding.idItemGambarHeader)
         }
     }
 
-    /**
-     * Dipanggil saat RecyclerView perlu membuat ViewHolder baru
-     */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AcaraViewHolder {
-        // Buat binding untuk item_acara.xml
         val binding = ItemAcaraBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
@@ -58,25 +64,15 @@ class AcaraAdapter : ListAdapter<Acara, AcaraAdapter.AcaraViewHolder>(AcaraDiffC
         return AcaraViewHolder(binding)
     }
 
-    /**
-     * Dipanggil saat RecyclerView ingin menampilkan data
-     * di posisi tertentu.
-     */
     override fun onBindViewHolder(holder: AcaraViewHolder, position: Int) {
         val acaraSaatIni = getItem(position)
-        holder.bind(acaraSaatIni) // Panggil fungsi bind kita yang sudah di-update
+        holder.bind(acaraSaatIni)
 
-        // Atur OnClickListener untuk seluruh tampilan item
         holder.itemView.setOnClickListener {
-            // Panggil fungsi callback jika ada
             onItemClickCallback?.invoke(acaraSaatIni)
         }
     }
 
-    /**
-     * DiffCallback membantu ListAdapter menentukan
-     * item mana yang berubah, ditambah, atau dihapus.
-     */
     class AcaraDiffCallback : DiffUtil.ItemCallback<Acara>() {
         override fun areItemsTheSame(oldItem: Acara, newItem: Acara): Boolean {
             return oldItem.id == newItem.id
